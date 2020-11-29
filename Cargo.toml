@@ -1,0 +1,17 @@
+[package]
+name = "cargo-rclean"
+version = "0.1.0"
+authors = ["TENX@coldswind@pm.me"]
+edition = "2018"
+
+[dependencies]
+rayon = "1.5.0"
+walkdir = "2.3.1"
+anyhow = "1.0.34"
+ansi_term = "0.12.1"
+
+[profile.release]
+lto = true
+panic = "abort"
+codegen-units = 1
+incremental = true
