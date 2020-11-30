@@ -21,5 +21,5 @@ $ cargo install --git https://github.com/TENX-S/cargo-rclean.git --branch main
 
 # Usage
 ```shell script
-$ cargo-rclean /absolute/path/to/your/work/directory
+$ cargo-rclean /absolute/path/you/specified
 ```
