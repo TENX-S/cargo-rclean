@@ -1,10 +1,9 @@
 use std::fs;
-use anyhow::Result;
-use std::path::Path;
+use anyhow::{Result, bail};
+use std::path::{Path, PathBuf};
 use clap::{App, Arg};
-use rayon::prelude::*;
 use std::process::Command;
-use walkdir::{WalkDir, DirEntry, Error};
+use walkdir::{WalkDir, DirEntry};
 use ansi_term::Colour::{Cyan, Red, Green,};
 use std::sync::atomic::{AtomicBool, Ordering::SeqCst};
 
@@ -45,19 +44,31 @@ fn main() {
     })
         .into_iter()
         .filter_entry(|e| strategy(e))
+        .map(|p| p.unwrap())
         .collect::<Vec<_>>()
-        .into_par_iter()
-        .for_each(|x: Result<DirEntry, Error>|
-            fs::read_dir(x.unwrap().path())
-                .unwrap()
-                .map(|x| x.as_ref().unwrap().path())
-                .filter(|x| {
-                    x.is_dir() && x.join("Cargo.toml").exists() && x.join("target").is_dir()
-                })
-                .for_each(|x| {
-                    cargo_clean(x).unwrap();
-                })
-        );
+        .into_iter()
+        .for_each(|x: DirEntry| {
+            let ret = fs::read_dir(x.path());
+            if let Ok(read_dir) = ret {
+                read_dir
+                    .map(|x| -> Result<PathBuf> {
+                        if let Ok(entry) = x.as_ref() {
+                            Ok(entry.path().to_path_buf())
+                        } else {
+                            bail!(x.unwrap_err())
+                        }
+                    })
+                    .filter(|x| {
+                        let x = x.as_ref().unwrap();
+                        x.is_dir() && x.join("Cargo.toml").exists() && x.join("target").is_dir()
+                    })
+                    .for_each(|x| {
+                        cargo_clean(x.unwrap()).unwrap_or_else(|e| eprintln!("{}", e));
+                    })
+            } else {
+                eprintln!("{}: {}", ret.unwrap_err(), x.path().display());
+            }
+        });
 }
 
 #[inline(always)]
