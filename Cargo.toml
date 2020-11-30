@@ -4,6 +4,7 @@ version = "1.0.1"
 authors = ["TENX@coldswind@pm.me"]
 edition = "2018"
 license = "GPLv3"
+description = "Clean your rust projects, recursively"
 exclude = ["screenshots/"]
 
 [dependencies]
