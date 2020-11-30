@@ -13,6 +13,12 @@ This program comes with no warranty. You must use this program at your own risk.
 $ cargo install cargo-rclean
 ```
 
+Or you may want to keep up with upstream
+
+```shell script
+$ cargo install --git https://github.com/TENX-S/cargo-rclean.git --branch main
+```
+
 # Usage
 ```shell script
 $ cargo-rclean /absolute/path/to/your/work/directory
