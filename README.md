@@ -21,5 +21,15 @@ $ cargo install --git https://github.com/TENX-S/cargo-rclean.git --branch main
 
 # Usage
 ```shell script
-$ cargo-rclean /absolute/path/you/specified
+USAGE:
+    cargo-rclean [FLAGS] <PATH>
+
+FLAGS:
+    -d, --doc        Whether or not to clean just the documentation directory
+    -h, --help       Prints help information
+    -r, --release    Whether or not to clean release artifacts
+    -V, --version    Prints version information
+
+ARGS:
+    <PATH>    Cleans up all rust projects in the specified directory
 ```
