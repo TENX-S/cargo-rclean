@@ -1,7 +1,7 @@
 [package]
 name = "cargo-rclean"
-version = "1.0.2"
-authors = ["TENX@coldswind@pm.me"]
+version = "1.0.3"
+authors = ["Ares <coldswind@pm.me>"]
 edition = "2018"
 license-file = "LICENSE"
 description = "Clean your rust projects, recursively"
