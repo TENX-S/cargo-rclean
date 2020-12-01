@@ -1,6 +1,6 @@
 [package]
 name = "cargo-rclean"
-version = "1.0.1"
+version = "1.0.2"
 authors = ["TENX@coldswind@pm.me"]
 edition = "2018"
 license-file = "LICENSE"
