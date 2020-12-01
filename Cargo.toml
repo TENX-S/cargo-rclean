@@ -1,6 +1,6 @@
 [package]
 name = "cargo-rclean"
-version = "1.1.0"
+version = "1.2.0"
 authors = ["Ares <coldswind@pm.me>"]
 edition = "2018"
 license-file = "LICENSE"
@@ -10,10 +10,10 @@ description = "Clean your rust projects, recursively"
 exclude = ["screenshots/"]
 
 [dependencies]
-walkdir = "2.3.1"
-anyhow = "1.0.34"
-ansi_term = "0.12.1"
 clap = "2.33.3"
+anyhow = "1.0.34"
+walkdir = "2.3.1"
+ansi_term = "0.12.1"
 
 [profile.release]
 lto = true

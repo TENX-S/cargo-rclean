@@ -7,7 +7,7 @@ This program comes with no warranty. You must use this program at your own risk.
 <img src="https://github.com/TENX-S/cargo-rclean/blob/main/screenshots/cargo-rclean.gif?raw=true">
 
 # Installation
-## Using Cargo
+## Using Cargo (Recommended)
 
 ```shell script
 $ cargo install cargo-rclean
@@ -22,7 +22,7 @@ $ cargo install --git https://github.com/TENX-S/cargo-rclean.git --branch main
 # Usage
 ```shell script
 $ cargo-rclean --help
-cargo-rclean 1.1.0
+cargo-rclean 1.2.0
 Ares <coldswind@pm.me>
 Clean your rust project, recursively
 
