@@ -71,8 +71,7 @@ fn main() {
             }
         })
         .for_each(|x: Result<DirEntry>| {
-            if x.is_ok() {
-                let x = x.unwrap();
+            if let Ok(x) = x {
                 let ret = fs::read_dir(x.path());
                 if let Ok(read_dir) = ret {
                     read_dir
@@ -133,7 +132,7 @@ fn is_hidden(entry: &DirEntry) -> bool {
     entry
         .file_name()
         .to_str()
-        .map(|s| s.starts_with("."))
+        .map(|s| s.starts_with('.'))
         .unwrap_or(false)
 }
 
