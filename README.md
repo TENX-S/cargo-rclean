@@ -22,7 +22,7 @@ $ cargo install --git https://github.com/TENX-S/cargo-rclean.git --branch main
 # Usage
 ```shell script
 $ cargo-rclean --help
-cargo-rclean 1.2.0
+cargo-rclean 1.2.1
 Ares <coldswind@pm.me>
 Clean your rust project, recursively
 

@@ -16,7 +16,7 @@ fn main() {
 
     WalkDir::new({
         let args = App::new("cargo-rclean")
-            .version("1.2.0")
+            .version("1.2.1")
             .author("Ares <coldswind@pm.me>")
             .about("Clean your rust project, recursively")
             .arg(Arg::with_name("INPUT")
