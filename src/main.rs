@@ -10,6 +10,7 @@ use std::sync::atomic::{AtomicBool, Ordering::SeqCst};
 
 static RELEASE: AtomicBool = AtomicBool::new(false);
 static DOC: AtomicBool = AtomicBool::new(false);
+static ALL: AtomicBool = AtomicBool::new(false);
 
 fn main() {
 
@@ -36,6 +37,12 @@ fn main() {
                 .long("doc")
                 .takes_value(false)
             )
+            .arg(Arg::with_name("all")
+                .help("Clean the rust projects no matter it has a target folder or not")
+                .short("a")
+                .long("all")
+                .takes_value(false)
+            )
             .get_matches();
 
         if args.is_present("release") {
@@ -44,6 +51,10 @@ fn main() {
 
         if args.is_present("doc") {
             DOC.store(true, SeqCst)
+        }
+
+        if args.is_present("all") {
+            ALL.store(true, SeqCst)
         }
 
         args.value_of("INPUT").unwrap().to_string()
@@ -55,7 +66,7 @@ fn main() {
             if let Ok(entry) = p {
                 Ok(entry)
             } else {
-                eprintln!("{}: {}", ANSI_err(), Red.bold().paint(p.unwrap_err().to_string()));
+                eprintln!("{}: {}", ANSI_err(), Cyan.bold().paint(p.unwrap_err().to_string()));
                 bail!("")
             }
         })
@@ -80,12 +91,12 @@ fn main() {
                             x.join("Cargo.toml").exists()
                         })
                         .filter(|x| {
-                            ["examples", "tests", "benches"]
-                                .iter()
-                                .fold(true, |tag, p| tag & !x.join(p).exists())
-                        })
-                        .filter(|x| {
-                            x.join("target").is_dir()
+                            let detect_target = x.join("target").is_dir();
+                            if ALL.load(SeqCst) {
+                                !detect_target
+                            } else {
+                                detect_target
+                            }
                         })
                         .for_each(|x| {
                             cargo_clean(x).unwrap_or_else(|e| eprintln!("{}! {}", ANSI_err(), e));
@@ -122,8 +133,13 @@ fn is_hidden(entry: &DirEntry) -> bool {
     entry
         .file_name()
         .to_str()
-        .map(|s| s.starts_with('.'))
+        .map(|s| s.starts_with("."))
         .unwrap_or(false)
+}
+
+#[inline(always)]
+fn is_symlink(entry: &DirEntry) -> bool {
+    entry.path_is_symlink()
 }
 
 #[inline(always)]
@@ -151,7 +167,7 @@ fn path_to_str(path: impl AsRef<Path>) -> String {
 #[inline(always)]
 fn strategy(entry: &DirEntry) -> bool {
     if cfg!(target_os = "macos") {
-        !is_hidden(entry) && entry.path().is_dir() && !(
+        !is_symlink(entry) && !is_hidden(entry) && entry.path().is_dir() && !(
             if let Some(ext) = entry.path().extension() {
                 ext == "app"
             } else {
@@ -159,6 +175,6 @@ fn strategy(entry: &DirEntry) -> bool {
             }
         )
     } else {
-        !is_hidden(entry) && entry.path().is_dir()
+        !is_symlink(entry) && !is_hidden(entry) && entry.path().is_dir()
     }
 }
