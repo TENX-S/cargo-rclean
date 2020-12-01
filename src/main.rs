@@ -1,10 +1,10 @@
 use std::fs;
+use std::path::Path;
 use clap::{App, Arg};
-use std::process::Command;
 use anyhow::{Result, bail};
-use std::path::{Path, PathBuf};
 use walkdir::{WalkDir, DirEntry};
 use ansi_term::ANSIGenericString;
+use std::process::{exit, Command};
 use ansi_term::Colour::{Cyan, Red, Green};
 use std::sync::atomic::{AtomicBool, Ordering::SeqCst};
 
@@ -75,19 +75,27 @@ fn main() {
                 let ret = fs::read_dir(x.path());
                 if let Ok(read_dir) = ret {
                     read_dir
-                        .map(|x| -> Result<PathBuf> {
+                        .map(|x| {
                             if let Ok(entry) = x.as_ref() {
-                                Ok(entry.path())
+                                entry.path()
                             } else {
-                                bail!("{}", Red.bold().paint(x.unwrap_err().to_string()));
+                                eprintln!("{}", x.unwrap_err());
+                                exit(1)
                             }
                         })
-                        .map(Result::unwrap)
+                        .filter(|x| { x.is_dir() })
+                        .filter(|x| { x.join("Cargo.toml").exists() })
                         .filter(|x| {
-                            x.is_dir()
-                        })
-                        .filter(|x| {
-                            x.join("Cargo.toml").exists()
+                            ["examples", "tests", "benches"]
+                                .iter()
+                                .fold(
+                                    true, |tag, &p| {
+                                        tag & !x
+                                            .iter()
+                                            .map(|p| p.to_str().unwrap())
+                                            .any(|x| x == p)
+                                    }
+                                )
                         })
                         .filter(|x| {
                             let detect_target = x.join("target").is_dir();
