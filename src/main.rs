@@ -6,7 +6,7 @@ use walkdir::{WalkDir, DirEntry};
 use ansi_term::ANSIGenericString;
 use std::process::{exit, Command};
 use ansi_term::Colour::{Cyan, Red, Green};
-use std::sync::atomic::{AtomicBool, Ordering::SeqCst};
+use std::sync::atomic::{AtomicBool, Ordering::Relaxed};
 
 static RELEASE: AtomicBool = AtomicBool::new(false);
 static DOC: AtomicBool = AtomicBool::new(false);
@@ -46,15 +46,15 @@ fn main() {
             .get_matches();
 
         if args.is_present("release") {
-            RELEASE.store(true, SeqCst)
+            RELEASE.store(true, Relaxed)
         }
 
         if args.is_present("doc") {
-            DOC.store(true, SeqCst)
+            DOC.store(true, Relaxed)
         }
 
         if args.is_present("all") {
-            ALL.store(true, SeqCst)
+            ALL.store(true, Relaxed)
         }
 
         args.value_of("INPUT").unwrap().to_string()
@@ -99,7 +99,7 @@ fn main() {
                         })
                         .filter(|x| {
                             let detect_target = x.join("target").is_dir();
-                            if ALL.load(SeqCst) {
+                            if ALL.load(Relaxed) {
                                 !detect_target
                             } else {
                                 detect_target
@@ -118,9 +118,9 @@ fn cargo_clean(path: impl AsRef<Path>) -> Result<()> {
 
     let mut args = vec!["clean"];
 
-    if RELEASE.load(SeqCst) { args.push("--release"); }
+    if RELEASE.load(Relaxed) { args.push("--release"); }
 
-    if DOC.load(SeqCst) { args.push("--doc"); }
+    if DOC.load(Relaxed) { args.push("--doc"); }
 
     if Command::new("cargo")
         .args(&args)
