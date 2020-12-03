@@ -1,4 +1,4 @@
-Clean your rust projects, recursively
+**Clean your rust projects, recursively**
 
 # Disclaimer
 This program comes with no warranty. You must use this program at your own risk.
